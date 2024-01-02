@@ -3,14 +3,14 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 
 interface UserAttributes {
   id?: number;
-  username: string;
+  // usernsame: string;
   email: string;
   password: string;
 }
 
 class User extends Model<UserAttributes> implements UserAttributes {
   public id!: number;
-  public username!: string;
+  // public username!: string;
   public email!: string;
   public password!: string;
 }
@@ -23,10 +23,10 @@ const initUserModel = (sequelize: Sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      // username: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
       email: {
         type: DataTypes.STRING,
         allowNull: false,

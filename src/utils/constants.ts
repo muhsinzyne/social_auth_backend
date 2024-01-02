@@ -3,4 +3,8 @@ export const ERRORS = {
     code: 500,
     message: "Internal Server Error",
   },
+  INVALID_CREDS: {
+    code: 400,
+    message: "Invalid Creds",
+  },
 };

@@ -1,6 +1,6 @@
 import { User } from "../../config/models/user.model";
 import { ERRORS } from "../../utils/constants";
-import { UserControllerType } from "./types";
+import { UserServiceType } from "./types";
 
 const { INTERNAL_SERVER } = ERRORS;
 
@@ -34,10 +34,18 @@ const UserController = () =>
         };
       }
     },
-    addUser: () => {},
+    addUser: async (data) => {
+      const { email, password } = data;
+      try {
+        await User.create({ email, password });
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
     updateUsers: () => {},
     updateSingleUser: () => {},
     deleteUser: () => {},
-  } as UserControllerType);
+  } as UserServiceType);
 
 export default UserController;

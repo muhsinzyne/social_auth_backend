@@ -1,10 +1,15 @@
 import { User } from "../../config/models/user.model";
 
-export interface UserControllerType {
+export interface UserServiceType {
   getAllUsers: () => Promise<User[]>;
   getSingleUser: (params: any) => any;
-  addUser: () => any;
+  addUser: (data: AddUserDataType) => Promise<void>;
   updateUsers: () => any;
   updateSingleUser: () => any;
   deleteUser: () => any;
+}
+
+export interface AddUserDataType {
+  email: string;
+  password: string;
 }
