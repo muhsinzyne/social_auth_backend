@@ -4,13 +4,13 @@ import { UserServiceType } from "./types";
 // Validating incoming data
 const UserValidator = () =>
   ({
+    logIn: (data) => {
+      if (!data || !data.email || !data.password)
+        return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
     getAllUsers: async () => {
-      try {
-        return [];
-      } catch (e) {
-        console.log(e);
-        return e;
-      }
+      return [];
     },
     getSingleUser: async (params) => {},
     addUser: (data) => {

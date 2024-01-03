@@ -1,7 +1,7 @@
 // user.model.ts
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface UserAttributes {
+export interface UserAttributes {
   id?: number;
   // usernsame: string;
   email: string;

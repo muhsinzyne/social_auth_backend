@@ -8,6 +8,15 @@ export const UserRoutes = (app: Application) => {
   const Validator = TriggerValidator();
   const Controller = TriggerController();
 
+  app.post(
+    "/api/user/login",
+    responseHandler({
+      validator: Validator.logIn,
+      controller: Controller.logIn,
+      props: (req) => [req.body],
+    })
+  );
+
   // app.get(
   //   "/api/user",
   //   responseHandler({

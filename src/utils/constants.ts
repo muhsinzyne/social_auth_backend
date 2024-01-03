@@ -7,4 +7,8 @@ export const ERRORS = {
     code: 400,
     message: "Invalid Creds",
   },
+  USER_NOT_FOUND: {
+    code: 404,
+    message: "User Not Found",
+  },
 };
