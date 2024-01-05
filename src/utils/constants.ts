@@ -11,4 +11,19 @@ export const ERRORS = {
     code: 404,
     message: "User Not Found",
   },
+  INVALID_TOKEN: {
+    code: 400,
+    ACCESS: {
+      expired: "Access Token Expired",
+      message: "Invalid Acess Token",
+    },
+    REFRESH: {
+      expired: "Refresh Token Expired",
+      message: "Invalid Refresh Token",
+    },
+  },
+  UNAUTHORIZED: {
+    code: 401,
+    message: "Unauthorized",
+  },
 };
