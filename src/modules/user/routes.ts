@@ -3,19 +3,13 @@ import { Application } from "express";
 import TriggerValidator from "./validator";
 import TriggerController from "./controller";
 import { responseHandler } from "../../helpers/HTTPRequestHandler";
+import verifyJWT from "../../helpers/verifyJWT";
 
 export const UserRoutes = (app: Application) => {
   const Validator = TriggerValidator();
   const Controller = TriggerController();
 
-  app.post(
-    "/api/user/login",
-    responseHandler({
-      validator: Validator.logIn,
-      controller: Controller.logIn,
-      props: (req) => [req.body],
-    })
-  );
+  app.use(verifyJWT);
 
   // app.get(
   //   "/api/user",
@@ -24,7 +18,14 @@ export const UserRoutes = (app: Application) => {
   //   })
   // );
 
-  app.get("/api/user:id", Controller.getSingleUser);
+  app.get(
+    "/api/user/:id",
+    responseHandler({
+      validator: Validator.getSingleUser,
+      controller: Controller.getSingleUser,
+      props: (req) => [req.params],
+    })
+  );
 
   app.post(
     "/api/user",

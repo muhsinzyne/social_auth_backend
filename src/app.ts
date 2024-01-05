@@ -1,12 +1,14 @@
 require("dotenv").config();
 import db from "./config/connection";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 // import route setup files
+import { AuthRoutes } from "./modules/auth/routes";
 import { UserRoutes } from "./modules/user/routes";
 import { urlencoded } from "express";
 
@@ -28,6 +30,7 @@ const corsOptions = {
 
 // Use middlewares
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
@@ -40,7 +43,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-// User routes
+// routes
+AuthRoutes(app);
 UserRoutes(app);
 
 app.get("*", (req: any, res: { send: (arg0: string) => void }) => {
