@@ -12,10 +12,10 @@ export const ERRORS = {
     message: "User Not Found",
   },
   INVALID_TOKEN: {
-    code: 400,
+    code: 401,
     ACCESS: {
       expired: "Access Token Expired",
-      message: "Invalid Acess Token",
+      message: "Invalid Access Token",
     },
     REFRESH: {
       expired: "Refresh Token Expired",

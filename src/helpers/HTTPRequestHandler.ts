@@ -24,6 +24,8 @@ export const responseHandler =
       res.json({ success: true, data });
     } catch (e) {
       console.error(e);
-      res.json({ success: false, error: e.message || INTERNAL_SERVER.message });
+      res
+        .status(e.statusCode || INTERNAL_SERVER.code)
+        .json({ success: false, error: e.message || INTERNAL_SERVER.message });
     }
   };
