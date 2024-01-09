@@ -16,22 +16,12 @@ const UserController = () =>
       }
     },
     getSingleUser: async (params) => {
-      if (params && params.id) {
-        try {
-          const user = await User.findOne({ where: { id: params.id } });
-          return { success: true, data: user };
-        } catch (e) {
-          console.error(e);
-          return {
-            success: false,
-            error: e.message || INTERNAL_SERVER.message,
-          };
-        }
-      } else {
-        return {
-          success: false,
-          error: "userId not found",
-        };
+      try {
+        const user = await User.findOne({ where: { id: params.id } });
+        return { user };
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
       }
     },
     addUser: async (data) => {

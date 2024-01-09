@@ -2,10 +2,11 @@ import jwt from "jsonwebtoken";
 import { Jwt } from "../config/models/jwt.model";
 import { User, UserAttributes } from "../config/models/user.model";
 import { ERRORS } from "../utils/constants";
+import { CustomError } from "../helpers/customError";
 
 export interface VerifyTokenResponses {
   status: boolean;
-  tokenDetails: string | jwt.JwtPayload;
+  tokenDetails: jwt.JwtPayload;
 }
 
 class JWT {
@@ -48,13 +49,18 @@ class JWT {
   }
 
   async verifyAccessToken(token: string): Promise<VerifyTokenResponses | void> {
-    // try {
     return jwt.verify(token, this.accessKey, (err, tokenDetails) => {
       if (err)
         if (err.name === "TokenExpiredError") {
-          throw new Error(ERRORS.INVALID_TOKEN.ACCESS.expired);
+          throw new CustomError(
+            ERRORS.INVALID_TOKEN.ACCESS.expired,
+            ERRORS.INVALID_TOKEN.code
+          );
         } else {
-          throw new Error(ERRORS.INVALID_TOKEN.ACCESS.message);
+          throw new CustomError(
+            ERRORS.INVALID_TOKEN.ACCESS.message,
+            ERRORS.INVALID_TOKEN.code
+          );
         }
 
       return {
@@ -62,15 +68,6 @@ class JWT {
         tokenDetails,
       };
     });
-
-    //   const tokenDetails = jwt.verify(token, this.accessKey);
-    //   return {
-    //     status: true,
-    //     tokenDetails,
-    //   };
-    // } catch (error) {
-    //   console.error(error);
-    // }
   }
 
   async verifyRefreshToken(
@@ -81,8 +78,20 @@ class JWT {
 
       if (!tokenDetails) throw new Error(ERRORS.INVALID_TOKEN.REFRESH.message);
 
-      jwt.verify(token, this.refreshKey, (err, tokenDetails) => {
-        if (err) throw new Error(ERRORS.INVALID_TOKEN.REFRESH.message);
+      return jwt.verify(token, this.refreshKey, (err, tokenDetails) => {
+        if (err) {
+          if (err.name === "TokenExpiredError") {
+            throw new CustomError(
+              ERRORS.INVALID_TOKEN.REFRESH.expired,
+              ERRORS.INVALID_TOKEN.code
+            );
+          } else {
+            throw new CustomError(
+              ERRORS.INVALID_TOKEN.REFRESH.message,
+              ERRORS.INVALID_TOKEN.code
+            );
+          }
+        }
 
         return {
           status: true,
@@ -91,11 +100,15 @@ class JWT {
       });
     } catch (error) {
       console.error(error);
+      throw new CustomError(
+        error.message || ERRORS.INTERNAL_SERVER.message,
+        error.statusCode || ERRORS.INTERNAL_SERVER.code
+      );
     }
   }
 
   async generateNewAccessToken(
-    tokenDetails: Partial<UserAttributes>
+    tokenDetails: jwt.JwtPayload
   ): Promise<{ accessToken: string }> {
     try {
       if (tokenDetails && tokenDetails.email) {

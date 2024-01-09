@@ -14,10 +14,12 @@ interface LoginResponse {
 }
 
 export interface AuthServiceType {
+  registration: (data: AddUserDataType) => Promise<void>;
   logIn: (
     data: AddUserDataType,
     res: CustomResponseLogin
   ) => Promise<LoginResponse>;
+  refresh: (cookies: { jwt: string }) => Promise<{ accessToken: string }>;
   logout: (
     cookies: { jwt: string },
     res: CustomResponseLogout

@@ -1,6 +1,7 @@
 import { User } from "../../config/models/user.model";
+import { CustomError } from "../../helpers/customError";
 import Bcrypt from "../../library/bcrypt";
-import JWT from "../../library/jwt";
+import JWT, { VerifyTokenResponses } from "../../library/jwt";
 import { ERRORS } from "../../utils/constants";
 import { AuthServiceType } from "./types";
 
@@ -8,6 +9,15 @@ const { INTERNAL_SERVER } = ERRORS;
 
 const AuthController = () =>
   ({
+    registration: async (data) => {
+      const { email, password } = data;
+      try {
+        await User.create({ email, password });
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
     logIn: async (data, res) => {
       const { email, password } = data;
       try {
@@ -27,8 +37,8 @@ const AuthController = () =>
         // storing refresh token on headers
         res.cookie("jwt", refreshToken, {
           httpOnly: true,
-          sameSite: "None",
-          secure: true,
+          sameSite: "strict",
+          secure: false,
           maxAge: 24 * 60 * 60 * 1000,
         });
 
@@ -42,6 +52,32 @@ const AuthController = () =>
       } catch (e) {
         console.error(e);
         throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
+    refresh: async (cookies) => {
+      const { jwt } = cookies;
+
+      try {
+        // verifying refresh token
+        const { status, tokenDetails } = (await JWT.verifyRefreshToken(
+          jwt
+        )) as VerifyTokenResponses;
+        if (status && tokenDetails) {
+          // fetching new access token
+          const { accessToken } = await JWT.generateNewAccessToken(
+            tokenDetails
+          );
+
+          return {
+            accessToken,
+          };
+        }
+      } catch (e) {
+        console.error(e);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
       }
     },
     logout: async (cookies, res) => {

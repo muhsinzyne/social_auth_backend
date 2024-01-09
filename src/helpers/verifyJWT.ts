@@ -9,20 +9,23 @@ const verifyJWT = async (
 ): Promise<void> => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader?.startsWith("Bearer "))
+  if (!authHeader || !authHeader?.startsWith("Bearer ")) {
     res
       .status(ERRORS.UNAUTHORIZED.code)
       .json({ succes: false, error: ERRORS.UNAUTHORIZED.message });
-
-  const token = authHeader?.split(" ")[1];
-  try {
-    const { status, tokenDetails } = (await jwt.verifyAccessToken(
-      token
-    )) as VerifyTokenResponses;
-    if (status && tokenDetails) next();
-  } catch (error) {
-    console.error(error);
-    res.json({ status: false, error: error.message });
+  } else {
+    const token = authHeader?.split(" ")[1];
+    try {
+      const { status, tokenDetails } = (await jwt.verifyAccessToken(
+        token
+      )) as VerifyTokenResponses;
+      if (status && tokenDetails) next();
+    } catch (error) {
+      console.error(error);
+      res
+        .status(error.statusCode)
+        .json({ status: false, error: error.message });
+    }
   }
 };
 

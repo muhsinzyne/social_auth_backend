@@ -9,7 +9,16 @@ export const AuthRoutes = (app: Application) => {
   const Controller = TriggerController();
 
   app.post(
-    "/api/user/login",
+    "/api/auth/user/registration",
+    responseHandler({
+      validator: Validator.registration,
+      controller: Controller.registration,
+      props: (req) => [req.body],
+    })
+  );
+
+  app.post(
+    "/api/auth/user/login",
     responseHandler({
       validator: Validator.logIn,
       controller: Controller.logIn,
@@ -17,8 +26,17 @@ export const AuthRoutes = (app: Application) => {
     })
   );
 
+  app.get(
+    "/api/auth/token/refresh",
+    responseHandler({
+      validator: Validator.refresh,
+      controller: Controller.refresh,
+      props: (req) => [req.cookies],
+    })
+  );
+
   app.post(
-    "/api/user/logout",
+    "/api/auth/user/logout",
     responseHandler({
       validator: Validator.logout,
       controller: Controller.logout,
