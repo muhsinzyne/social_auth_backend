@@ -4,6 +4,9 @@ import TriggerValidator from "./validator";
 import TriggerController from "./controller";
 import { responseHandler } from "../../helpers/HTTPRequestHandler";
 
+import passport from "../../library/passport";
+import { PROVIDERS, RESPONSE_TYPES } from "../../utils/constants";
+
 export const AuthRoutes = (app: Application) => {
   const Validator = TriggerValidator();
   const Controller = TriggerController();
@@ -32,6 +35,24 @@ export const AuthRoutes = (app: Application) => {
       validator: Validator.refresh,
       controller: Controller.refresh,
       props: (req) => [req.cookies],
+    })
+  );
+
+  app.get(
+    "/auth/google",
+    responseHandler({
+      controller: Controller.googleAuth,
+      responseType: RESPONSE_TYPES.NULL,
+      props: (req, res, next) => [req, res, next],
+    })
+  );
+
+  app.get(
+    "/auth/google/callback",
+    responseHandler({
+      controller: Controller.googleCallback,
+      responseType: RESPONSE_TYPES.REDIRECT,
+      props: (req, res, next) => [req, res, next],
     })
   );
 

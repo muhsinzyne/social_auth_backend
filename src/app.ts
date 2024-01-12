@@ -4,6 +4,9 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
+import session from "express-session";
+import passport from "./library/passport";
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -29,12 +32,24 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 // Use middlewares
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+
+// Use Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Conecting to database
 db.authenticate();

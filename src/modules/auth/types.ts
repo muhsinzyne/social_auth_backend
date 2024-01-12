@@ -1,4 +1,9 @@
+import { NextFunction } from "express";
 import { User } from "../../config/models/user.model";
+
+interface Cookie {
+  cookie(name: string, value: string, options?: any): any;
+}
 
 interface CustomResponseLogin extends Response {
   cookie(name: string, value: string, options?: any): any;
@@ -20,6 +25,16 @@ export interface AuthServiceType {
     res: CustomResponseLogin
   ) => Promise<LoginResponse>;
   refresh: (cookies: { jwt: string }) => Promise<{ accessToken: string }>;
+  googleAuth: (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => Promise<void>;
+  googleCallback: (
+    req: Request & { login: any },
+    res: Response & Cookie,
+    next: NextFunction
+  ) => Promise<{ url: string }>;
   logout: (
     cookies: { jwt: string },
     res: CustomResponseLogout

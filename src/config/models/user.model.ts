@@ -2,17 +2,17 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 export interface UserAttributes {
-  id?: number;
-  // usernsame: string;
+  id: number;
   email: string;
-  password: string;
+  password?: string;
+  googleId?: string;
 }
 
 class User extends Model<UserAttributes> implements UserAttributes {
   public id!: number;
-  // public username!: string;
   public email!: string;
   public password!: string;
+  public googleId!: string;
 }
 
 const initUserModel = (sequelize: Sequelize) => {
@@ -23,10 +23,6 @@ const initUserModel = (sequelize: Sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      // username: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -37,7 +33,11 @@ const initUserModel = (sequelize: Sequelize) => {
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+      },
+      googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
     },
     {

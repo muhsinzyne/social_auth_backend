@@ -1,9 +1,10 @@
-import { User } from "../../config/models/user.model";
+import { User, UserAttributes } from "../../config/models/user.model";
 import { CustomError } from "../../helpers/customError";
 import Bcrypt from "../../library/bcrypt";
 import JWT, { VerifyTokenResponses } from "../../library/jwt";
-import { ERRORS } from "../../utils/constants";
+import { ERRORS, PROVIDERS } from "../../utils/constants";
 import { AuthServiceType } from "./types";
+import passport from "../../library/passport";
 
 const { INTERNAL_SERVER } = ERRORS;
 
@@ -79,6 +80,69 @@ const AuthController = () =>
           e.statusCode || INTERNAL_SERVER.code
         );
       }
+    },
+    googleAuth: (req, res, next) => {
+      return passport.authenticate(PROVIDERS.GOOGLE.name, {
+        scope: PROVIDERS.GOOGLE.scope,
+      })(req, res, next);
+    },
+
+    googleCallback: async (req, res, next) => {
+      return new Promise((resolve, reject) => {
+        passport.authenticate(
+          PROVIDERS.GOOGLE.name,
+          (err: any, user: Partial<UserAttributes>, info: any) => {
+            if (err) {
+              console.error(err);
+              return reject(err);
+            }
+            if (!user) {
+              // Handle failed authentication
+              resolve({
+                url: PROVIDERS.GOOGLE.failUrl,
+              });
+            }
+
+            // Manually log in the user
+            req.login(user, async (loginErr) => {
+              if (loginErr) {
+                console.error(loginErr);
+                return reject(loginErr);
+              }
+
+              try {
+                // Generating tokens
+                const { accessToken, refreshToken } = await JWT.genarateTokens(
+                  user
+                );
+
+                // Storing refresh token on headers
+                res.cookie("jwt", refreshToken, {
+                  httpOnly: true,
+                  sameSite: "strict",
+                  secure: false,
+                  maxAge: 24 * 60 * 60 * 1000,
+                });
+
+                // Storing access token on headers
+                res.cookie("token", accessToken, {
+                  httpOnly: false,
+                  sameSite: "strict",
+                  secure: false,
+                  maxAge: 24 * 60 * 60 * 1000,
+                });
+
+                resolve({
+                  url: PROVIDERS.GOOGLE.successUrl,
+                });
+              } catch (e) {
+                console.error(e);
+                reject(new Error(e.message || INTERNAL_SERVER));
+              }
+            });
+          }
+        )(req, res, next);
+      });
     },
     logout: async (cookies, res) => {
       const { jwt } = cookies;
