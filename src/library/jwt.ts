@@ -17,7 +17,7 @@ class JWT {
     this.refreshKey = process.env.REFRESH_TOKEN_PRIVATE_KEY;
   }
 
-  async genarateTokens(user: UserAttributes): Promise<{
+  async genarateTokens(user: Partial<UserAttributes>): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {

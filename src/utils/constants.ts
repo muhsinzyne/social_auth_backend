@@ -27,3 +27,18 @@ export const ERRORS = {
     message: "Unauthorized",
   },
 };
+
+export const PROVIDERS = {
+  GOOGLE: {
+    name: "google",
+    scope: ["profile", "email"],
+    successUrl: process.env.ORIGIN + "/dashboard",
+    failUrl: process.env.ORIGIN + "/sign-in",
+  },
+};
+
+export enum RESPONSE_TYPES {
+  JSON = "json",
+  REDIRECT = "redirect",
+  NULL = "null",
+}
