@@ -21,6 +21,15 @@ export const AuthRoutes = (app: Application) => {
   );
 
   app.post(
+    "/api/auth/account/check",
+    responseHandler({
+      validator: Validator.accountCheck,
+      controller: Controller.accountCheck,
+      props: (req) => [req.body],
+    })
+  );
+
+  app.post(
     "/api/auth/user/login",
     responseHandler({
       validator: Validator.logIn,
@@ -53,6 +62,14 @@ export const AuthRoutes = (app: Application) => {
       controller: Controller.googleCallback,
       responseType: RESPONSE_TYPES.REDIRECT,
       props: (req, res, next) => [req, res, next],
+    })
+  );
+
+  app.get(
+    "/api/auth/authentication",
+    responseHandler({
+      controller: Controller.authentication,
+      props: (req, res) => [req.cookies, res],
     })
   );
 

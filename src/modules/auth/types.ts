@@ -18,8 +18,16 @@ interface LoginResponse {
   user: User;
 }
 
+interface AccountCheckTye {
+  source: "google" | "manual";
+  email: string;
+}
+
 export interface AuthServiceType {
   registration: (data: AddUserDataType) => Promise<void>;
+  accountCheck: (
+    data: AccountCheckTye
+  ) => Promise<{ linkAccount: boolean; login: boolean }>;
   logIn: (
     data: AddUserDataType,
     res: CustomResponseLogin
@@ -35,6 +43,7 @@ export interface AuthServiceType {
     res: Response & Cookie,
     next: NextFunction
   ) => Promise<{ url: string }>;
+  authentication: (cookies: { jwt: string }) => Promise<{ auth: true }>;
   logout: (
     cookies: { jwt: string },
     res: CustomResponseLogout

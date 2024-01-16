@@ -9,6 +9,11 @@ const AuthValidator = () =>
         return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    accountCheck: (data) => {
+      if (!data || !data.source || !data.email)
+        return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
     logIn: (data, res) => {
       if (!res || !data || !data.email || !data.password)
         return Promise.reject(ERRORS.INVALID_CREDS);

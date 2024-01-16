@@ -11,6 +11,10 @@ export const ERRORS = {
     code: 404,
     message: "User Not Found",
   },
+  DUPLIACTE_USER: {
+    code: 409,
+    message: "Duplicate User",
+  },
   INVALID_TOKEN: {
     code: 401,
     ACCESS: {

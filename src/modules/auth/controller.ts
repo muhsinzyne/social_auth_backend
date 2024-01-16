@@ -12,11 +12,89 @@ const AuthController = () =>
   ({
     registration: async (data) => {
       const { email, password } = data;
+
       try {
-        await User.create({ email, password });
+        const user = await User.findOne({
+          where: { email },
+        });
+
+        if (user) {
+          if (!user.password && user.googleId) {
+            user.password = password;
+            await user.save();
+          }
+        } else {
+          await User.create({ email, password });
+        }
       } catch (e) {
         console.error(e);
-        throw new Error(e.message || INTERNAL_SERVER);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
+      }
+    },
+    accountCheck: async (data) => {
+      const { email, source } = data;
+      try {
+        const user = await User.findOne({
+          where: { email },
+        });
+
+        // Allowing registration process if user doesn't exist
+        if (!user)
+          return {
+            linkAccount: false,
+            login: false,
+          };
+
+        // Allowing login process if user has already linked with the account
+        if (user.password && user.googleId)
+          return {
+            linkAccount: false,
+            login: true,
+          };
+
+        switch (source) {
+          case "google":
+            // Alerting the user if he already did a manual registration
+            if (user.password && !user.googleId) {
+              return {
+                linkAccount: true,
+                login: false,
+              };
+            }
+
+            return {
+              linkAccount: false,
+              login: false,
+            };
+
+          case "manual":
+            // Alerting the user if he already did a google registration
+            if (!user.password && user.googleId) {
+              return {
+                linkAccount: true,
+                login: false,
+              };
+            }
+
+            if (user.password && !user.googleId) {
+              throw new CustomError(
+                ERRORS.DUPLIACTE_USER.message,
+                ERRORS.DUPLIACTE_USER.code
+              );
+            }
+
+          default:
+            return;
+        }
+      } catch (e) {
+        console.error(e);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
       }
     },
     logIn: async (data, res) => {
@@ -25,12 +103,20 @@ const AuthController = () =>
         const user = await User.findOne({ where: { email } });
 
         // throwing user not found error
-        if (!user) throw new Error(ERRORS.USER_NOT_FOUND.message);
+        if (!user)
+          throw new CustomError(
+            ERRORS.USER_NOT_FOUND.message,
+            ERRORS.USER_NOT_FOUND.code
+          );
 
         // comparing the incoming and existing password
         const status = await Bcrypt.compare(password, user.password);
 
-        if (!status) throw new Error(ERRORS.INVALID_CREDS.message);
+        if (!status)
+          throw new CustomError(
+            ERRORS.INVALID_CREDS.message,
+            ERRORS.INVALID_CREDS.code
+          );
 
         //generating tokens
         const { accessToken, refreshToken } = await JWT.genarateTokens(user);
@@ -52,7 +138,10 @@ const AuthController = () =>
         };
       } catch (e) {
         console.error(e);
-        throw new Error(e.message || INTERNAL_SERVER);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
       }
     },
     refresh: async (cookies) => {
@@ -143,6 +232,26 @@ const AuthController = () =>
           }
         )(req, res, next);
       });
+    },
+    authentication: async ({ jwt }) => {
+      if (!jwt)
+        throw new CustomError(
+          ERRORS.INVALID_TOKEN.REFRESH.message,
+          ERRORS.INVALID_TOKEN.code
+        );
+
+      try {
+        await JWT.verifyRefreshToken(jwt);
+        return {
+          auth: true,
+        };
+      } catch (e) {
+        console.error(e);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
+      }
     },
     logout: async (cookies, res) => {
       const { jwt } = cookies;
