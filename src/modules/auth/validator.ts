@@ -23,6 +23,16 @@ const AuthValidator = () =>
       if (!cookies || !cookies.jwt) return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    forgotPassword: (data) => {
+      if (!data || !data.email) return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
+    resetPassword: (data) => {
+      if (!data || !data.id || !data.token || !data.newPassword)
+        return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
+
     logout: (cookies, res) => {
       if (!cookies || !cookies.jwt || !res)
         return Promise.reject(ERRORS.INVALID_CREDS);

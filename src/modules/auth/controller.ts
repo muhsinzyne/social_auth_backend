@@ -5,6 +5,7 @@ import JWT, { VerifyTokenResponses } from "../../library/jwt";
 import { ERRORS, PROVIDERS } from "../../utils/constants";
 import { AuthServiceType } from "./types";
 import passport from "../../library/passport";
+import NodeMailer from "../../library/nodemailer";
 
 const { INTERNAL_SERVER } = ERRORS;
 
@@ -244,6 +245,80 @@ const AuthController = () =>
         await JWT.verifyRefreshToken(jwt);
         return {
           auth: true,
+        };
+      } catch (e) {
+        console.error(e);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
+      }
+    },
+    forgotPassword: async ({ email }) => {
+      try {
+        // Checking User
+        const user = await User.findOne({ where: { email } });
+
+        if (!user)
+          throw new CustomError(
+            ERRORS.USER_NOT_FOUND.message,
+            ERRORS.USER_NOT_FOUND.code
+          );
+
+        const { accessToken } = await JWT.generateNewAccessToken(
+          { email },
+          "5m"
+        );
+
+        // Body for to mail
+        const link = `${process.env.ORIGIN}/reset-password/${user.id}/${accessToken}`;
+
+        const status = await NodeMailer.sendMail(email, link);
+
+        if (status.mailSent)
+          return {
+            mailSent: true,
+          };
+
+        return {
+          mailSent: false,
+        };
+      } catch (e) {
+        console.error(e);
+        throw new CustomError(
+          e.message || INTERNAL_SERVER.message,
+          e.statusCode || INTERNAL_SERVER.code
+        );
+      }
+    },
+    resetPassword: async (data) => {
+      try {
+        const { id, token, newPassword } = data;
+        const user = await User.findOne({ where: { id } });
+
+        if (!user)
+          throw new CustomError(
+            ERRORS.USER_NOT_FOUND.message,
+            ERRORS.USER_NOT_FOUND.code
+          );
+
+        // Verifying the token from the link
+        const { status, tokenDetails } = (await JWT.verifyAccessToken(
+          token
+        )) as VerifyTokenResponses;
+
+        if (!(status && tokenDetails))
+          throw new CustomError(
+            ERRORS.INVALID_TOKEN.ACCESS.expired,
+            ERRORS.INVALID_TOKEN.code
+          );
+
+        // Updating the user with new password
+        user.password = newPassword;
+        user.save();
+
+        return {
+          resetPassword: true,
         };
       } catch (e) {
         console.error(e);

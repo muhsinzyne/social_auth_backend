@@ -4,8 +4,7 @@ import TriggerValidator from "./validator";
 import TriggerController from "./controller";
 import { responseHandler } from "../../helpers/HTTPRequestHandler";
 
-import passport from "../../library/passport";
-import { PROVIDERS, RESPONSE_TYPES } from "../../utils/constants";
+import { RESPONSE_TYPES } from "../../utils/constants";
 
 export const AuthRoutes = (app: Application) => {
   const Validator = TriggerValidator();
@@ -70,6 +69,24 @@ export const AuthRoutes = (app: Application) => {
     responseHandler({
       controller: Controller.authentication,
       props: (req, res) => [req.cookies, res],
+    })
+  );
+
+  app.post(
+    "/api/auth/password/forgot",
+    responseHandler({
+      validator: Validator.forgotPassword,
+      controller: Controller.forgotPassword,
+      props: (req) => [req.body],
+    })
+  );
+
+  app.post(
+    "/api/auth/password/reset",
+    responseHandler({
+      validator: Validator.resetPassword,
+      controller: Controller.resetPassword,
+      props: (req) => [req.body],
     })
   );
 

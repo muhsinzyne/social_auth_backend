@@ -23,6 +23,12 @@ interface AccountCheckTye {
   email: string;
 }
 
+interface ResetPassword {
+  id: string;
+  token: string;
+  newPassword: string;
+}
+
 export interface AuthServiceType {
   registration: (data: AddUserDataType) => Promise<void>;
   accountCheck: (
@@ -44,6 +50,8 @@ export interface AuthServiceType {
     next: NextFunction
   ) => Promise<{ url: string }>;
   authentication: (cookies: { jwt: string }) => Promise<{ auth: true }>;
+  forgotPassword: (data: { email: string }) => Promise<{ mailSent: boolean }>;
+  resetPassword: (data: ResetPassword) => Promise<{ resetPassword: boolean }>;
   logout: (
     cookies: { jwt: string },
     res: CustomResponseLogout

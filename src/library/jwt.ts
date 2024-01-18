@@ -108,7 +108,8 @@ class JWT {
   }
 
   async generateNewAccessToken(
-    tokenDetails: jwt.JwtPayload
+    tokenDetails: jwt.JwtPayload,
+    expire = "14m"
   ): Promise<{ accessToken: string }> {
     try {
       if (tokenDetails && tokenDetails.email) {
@@ -124,7 +125,7 @@ class JWT {
         };
 
         const accessToken = jwt.sign(payload, this.accessKey, {
-          expiresIn: "14m",
+          expiresIn: expire,
         });
 
         return {
