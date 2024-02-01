@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 4000;
 import { AuthRoutes } from "./modules/auth/routes";
 import { UserRoutes } from "./modules/user/routes";
 import { urlencoded } from "express";
+import { AppRoutes } from "./modules/app/routes";
 
 const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000"];
 
@@ -62,6 +63,7 @@ app.use(function (req, res, next) {
 // routes
 AuthRoutes(app);
 UserRoutes(app);
+AppRoutes(app);
 
 app.get("*", (req: any, res: { send: (arg0: string) => void }) => {
   res.send("404");

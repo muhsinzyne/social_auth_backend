@@ -30,6 +30,10 @@ export const ERRORS = {
     code: 401,
     message: "Unauthorized",
   },
+  APP_ID_NOT_FOUND: {
+    code: 404,
+    message: "App Id Not Found",
+  },
 };
 
 export const PROVIDERS = {

@@ -19,7 +19,10 @@ const verifyJWT = async (
       const { status, tokenDetails } = (await jwt.verifyAccessToken(
         token
       )) as VerifyTokenResponses;
-      if (status && tokenDetails) next();
+      if (status && tokenDetails) {
+        req.user = tokenDetails;
+        next();
+      }
     } catch (error) {
       console.error(error);
       res

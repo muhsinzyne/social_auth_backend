@@ -222,6 +222,14 @@ const AuthController = () =>
                   maxAge: 24 * 60 * 60 * 1000,
                 });
 
+                // Storing userId on headers
+                res.cookie("userId", user.id.toString(), {
+                  httpOnly: false,
+                  sameSite: "strict",
+                  secure: false,
+                  maxAge: 24 * 60 * 60 * 1000,
+                });
+
                 resolve({
                   url: PROVIDERS.GOOGLE.successUrl,
                 });

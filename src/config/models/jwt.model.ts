@@ -2,11 +2,13 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 interface JWTAttributes {
+  id: number;
   userId: number;
   token: string;
 }
 
 class Jwt extends Model<JWTAttributes> implements JWTAttributes {
+  public id!: number;
   public userId!: number;
   public token!: string;
 }
@@ -14,9 +16,14 @@ class Jwt extends Model<JWTAttributes> implements JWTAttributes {
 const initJwtModel = (sequelize: Sequelize) => {
   Jwt.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
       userId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
+        allowNull: false,
       },
       token: {
         type: DataTypes.STRING,
@@ -26,7 +33,7 @@ const initJwtModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: "Jwt",
+      modelName: "jwtdetails",
     }
   );
 };

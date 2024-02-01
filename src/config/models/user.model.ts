@@ -42,7 +42,7 @@ const initUserModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: "userdetails",
     }
   );
 };
