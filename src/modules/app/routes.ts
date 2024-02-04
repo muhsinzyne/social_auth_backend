@@ -28,4 +28,13 @@ export const AppRoutes = (app: Application) => {
       props: (req) => [req.body, req.user],
     })
   );
+
+  app.put(
+    "/api/app",
+    responseHandler({
+      validator: Validator.updateApp,
+      controller: Controller.updateApp,
+      props: (req) => [req.body],
+    })
+  );
 };

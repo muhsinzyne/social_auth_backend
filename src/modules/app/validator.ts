@@ -20,6 +20,12 @@ const UserValidator = () =>
         return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    updateApp: (data) => {
+      const validKeys = ["appId", "appName"];
+      if (!data || !Object.keys(data).every((key) => validKeys.includes(key)))
+        return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
   } as AppServiceType);
 
 export default UserValidator;

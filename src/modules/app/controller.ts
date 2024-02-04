@@ -36,6 +36,23 @@ const AppController = () =>
         throw new Error(e.message || INTERNAL_SERVER);
       }
     },
+    updateApp: async (data) => {
+      try {
+        const { appId, ...rest } = data;
+        const app = await App.findOne({ where: { appId } });
+
+        if (!app)
+          throw new CustomError(
+            APP_ID_NOT_FOUND.message,
+            APP_ID_NOT_FOUND.code
+          );
+
+        await app.update(rest);
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
   } as AppServiceType);
 
 export default AppController;
