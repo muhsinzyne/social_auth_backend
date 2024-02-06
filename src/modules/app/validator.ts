@@ -26,6 +26,10 @@ const UserValidator = () =>
         return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    deleteApp: (data) => {
+      if (!data || !data.appId) return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
   } as AppServiceType);
 
 export default UserValidator;

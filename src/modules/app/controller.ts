@@ -53,6 +53,23 @@ const AppController = () =>
         throw new Error(e.message || INTERNAL_SERVER);
       }
     },
+    deleteApp: async (data) => {
+      try {
+        const { appId } = data;
+        const app = await App.findOne({ where: { appId } });
+
+        if (!app)
+          throw new CustomError(
+            APP_ID_NOT_FOUND.message,
+            APP_ID_NOT_FOUND.code
+          );
+
+        await App.destroy({ where: { appId } });
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
   } as AppServiceType);
 
 export default AppController;

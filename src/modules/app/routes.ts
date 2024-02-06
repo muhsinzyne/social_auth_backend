@@ -37,4 +37,13 @@ export const AppRoutes = (app: Application) => {
       props: (req) => [req.body],
     })
   );
+
+  app.delete(
+    "/api/app/:appId",
+    responseHandler({
+      validator: Validator.deleteApp,
+      controller: Controller.deleteApp,
+      props: (req) => [req.params],
+    })
+  );
 };
