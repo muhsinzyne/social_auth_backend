@@ -18,6 +18,23 @@ const AppController = () =>
         throw new Error(e.message || INTERNAL_SERVER);
       }
     },
+    getSingleApp: async (data) => {
+      try {
+        const { appId } = data;
+        const app = await App.findOne({ where: { appId } });
+
+        if (!app)
+          throw new CustomError(
+            APP_ID_NOT_FOUND.message,
+            APP_ID_NOT_FOUND.code
+          );
+
+        return app;
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
     addApp: async (data, user) => {
       const appId = uuidv4();
       try {

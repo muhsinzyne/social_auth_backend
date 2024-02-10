@@ -20,6 +20,15 @@ export const AppRoutes = (app: Application) => {
     })
   );
 
+  app.get(
+    "/api/app/:appId",
+    responseHandler({
+      validator: Validator.getSingleApp,
+      controller: Controller.getSingleApp,
+      props: (req) => [req.params],
+    })
+  );
+
   app.post(
     "/api/app",
     responseHandler({

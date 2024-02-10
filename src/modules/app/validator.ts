@@ -8,6 +8,10 @@ const UserValidator = () =>
       if (!user || !user.id) return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    getSingleApp: (data) => {
+      if (!data || !data.appId) return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
     addApp: (data, user) => {
       if (
         !data ||
