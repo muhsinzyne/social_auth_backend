@@ -36,12 +36,22 @@ const AppController = () =>
       }
     },
     addApp: async (data, user) => {
-      const appId = uuidv4();
+      const { appId, ...rest } = data;
+
       try {
         if (appId) {
-          data["appId"] = appId;
-          data["userId"] = user.id;
-          await App.create(data);
+          const app = await App.findOne({ where: { appId } });
+
+          await app.update(rest);
+          return { appId };
+        }
+
+        const generatedAppId = uuidv4();
+        if (generatedAppId) {
+          data["appId"] = generatedAppId;
+          data["userId"] = user.id.toString();
+          const createdApp = await App.create(data);
+          return { appId: createdApp.appId };
         } else {
           throw new CustomError(
             APP_ID_NOT_FOUND.message,

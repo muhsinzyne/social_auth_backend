@@ -13,13 +13,19 @@ const UserValidator = () =>
       return Promise.resolve();
     },
     addApp: (data, user) => {
+      const validKeys = [
+        "appName",
+        "organization",
+        "source",
+        "domain",
+        "step",
+        "appId",
+      ];
       if (
-        !data ||
-        !data.appName ||
-        !data.organization ||
-        !data.source ||
         !user ||
-        !user.id
+        !user.id ||
+        !data ||
+        !Object.keys(data).every((key) => validKeys.includes(key))
       )
         return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();

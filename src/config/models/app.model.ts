@@ -8,6 +8,8 @@ export interface AppAttributes {
   userId: string;
   organization: string;
   source: string;
+  domain: string;
+  step: number;
 }
 
 class App extends Model<AppAttributes> implements AppAttributes {
@@ -17,6 +19,8 @@ class App extends Model<AppAttributes> implements AppAttributes {
   public userId!: string;
   public organization!: string;
   public source!: string;
+  public domain!: string;
+  public step!: number;
 }
 
 const initAppModel = (sequelize: Sequelize) => {
@@ -38,7 +42,7 @@ const initAppModel = (sequelize: Sequelize) => {
         allowNull: false,
       },
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       organization: {
@@ -47,6 +51,14 @@ const initAppModel = (sequelize: Sequelize) => {
       },
       source: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      domain: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      step: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
