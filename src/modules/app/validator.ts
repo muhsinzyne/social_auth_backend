@@ -40,6 +40,11 @@ const UserValidator = () =>
       if (!data || !data.appId) return Promise.reject(ERRORS.INVALID_CREDS);
       return Promise.resolve();
     },
+    getAllAppsFiltered: (data) => {
+      if (!data || !data.page || !data.itemsPerPage)
+        return Promise.reject(ERRORS.INVALID_CREDS);
+      return Promise.resolve();
+    },
   } as AppServiceType);
 
 export default UserValidator;

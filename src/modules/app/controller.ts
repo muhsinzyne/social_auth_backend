@@ -97,6 +97,29 @@ const AppController = () =>
         throw new Error(e.message || INTERNAL_SERVER);
       }
     },
+    getAllAppsFiltered: async (data) => {
+      try {
+        const { page, itemsPerPage } = data;
+
+        const filteredApps =
+          itemsPerPage !== -1
+            ? await App.findAll({
+                limit: itemsPerPage,
+                offset: (page - 1) * itemsPerPage,
+              })
+            : await App.findAll();
+
+        const count = await App.count();
+
+        return {
+          apps: filteredApps,
+          count,
+        };
+      } catch (e) {
+        console.error(e);
+        throw new Error(e.message || INTERNAL_SERVER);
+      }
+    },
   } as AppServiceType);
 
 export default AppController;

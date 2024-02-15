@@ -55,4 +55,13 @@ export const AppRoutes = (app: Application) => {
       props: (req) => [req.params],
     })
   );
+
+  app.post(
+    "/api/app/filtered",
+    responseHandler({
+      validator: Validator.getAllAppsFiltered,
+      controller: Controller.getAllAppsFiltered,
+      props: (req) => [req.body],
+    })
+  );
 };
